@@ -34,8 +34,8 @@ public class MainActivity extends AppCompatActivity {
     private RequestQueue mRequestQueue;
     private StringRequest mStringRequest;
     private ImageView productImageView;
-    //private String url = "https://run.mocky.io/v3/85cf9aaf-aa4f-41bf-b10c-308f032f7ccc";
     private String scannedBarcode;
+    private DatabaseHelper databaseHelper; // Database helper instance
     Button btn_scan;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         });
         btn_scan = findViewById(R.id.btn_scan);
         productImageView = findViewById(R.id.productImageView);
+        databaseHelper = new DatabaseHelper(this);
         btn_scan.setOnClickListener(v ->
         {
             scanCode();
@@ -112,6 +113,14 @@ public class MainActivity extends AppCompatActivity {
             String productName = product.optString("generic_name", "N/A");
             String expiryDate = product.optString("expiration_date", "N/A");
             String imageUrl = product.optString("image_front_small_url", null);
+
+            boolean isInserted = databaseHelper.insertProduct(productName, expiryDate, imageUrl);
+
+            if (isInserted) {
+                Toast.makeText(getApplicationContext(), "Product saved to database", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "Failed to save product", Toast.LENGTH_SHORT).show();
+            }
 
             // Display the extracted fields
             String displayText = //"Product: " + productName + "\n" +
