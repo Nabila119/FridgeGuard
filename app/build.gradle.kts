@@ -39,5 +39,7 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")// to uses barcode scanner
     implementation("com.android.volley:volley:1.2.1")// adding volley dependency
-
+    implementation ("com.github.bumptech.glide:glide:4.12.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
+    implementation ("com.android.support:support-annotations:28.0.0")
 }
