@@ -3,7 +3,10 @@ package com.example.fridgeguard;
 import static android.content.ContentValues.TAG;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -14,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -32,6 +36,7 @@ import com.journeyapps.barcodescanner.ScanOptions;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Calendar;
 
 
@@ -45,6 +50,24 @@ public class MainActivity extends AppCompatActivity {
     EditText productNameEditText, quantityEditText, expiryDateEditText;
 
     Button submitButton;
+    private static final int PICK_IMAGE_REQUEST = 1;
+    private static final int REQUEST_IMAGE_CAPTURE = 2;
+    private Bitmap selectedImageBitmap;
+
+    private ActivityResultLauncher<Intent> takePictureLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    Bundle extras = result.getData().getExtras();
+                    if (extras != null) {
+                        selectedImageBitmap = (Bitmap) extras.get("data");
+                        productImageView.setImageBitmap(selectedImageBitmap);
+                    }
+                }
+            }
+    );
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +78,26 @@ public class MainActivity extends AppCompatActivity {
         quantityEditText = findViewById(R.id.editTextQuantity);
         expiryDateEditText = findViewById(R.id.datePickerExpiryDate);
         submitButton = findViewById(R.id.buttonSubmit);
+        productImageView = findViewById(R.id.productImageView);
+
+        productImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dispatchTakePictureIntent();
+            }
+        });
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Get other fields data
+                String productName = productNameEditText.getText().toString();
+                String quantity = quantityEditText.getText().toString();
+                String expiryDate = expiryDateEditText.getText().toString();
+
+                // Save data to database
+                saveData(productName, quantity, expiryDate);
+            }
+        });
 
         expiryDateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,6 +125,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -98,6 +143,14 @@ public class MainActivity extends AppCompatActivity {
 
         //getData();
     }
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            takePictureLauncher.launch(takePictureIntent);
+        }
+    }
+
+
 
     private void scanCode()
     {
@@ -109,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
         barcodeLauncher.launch(options);
 
     }
+
     private final ActivityResultLauncher<ScanOptions> barcodeLauncher = registerForActivityResult(new ScanContract(),
             result -> {
                 if(result.getContents() == null) {
@@ -155,14 +209,14 @@ public class MainActivity extends AppCompatActivity {
             String expiryDate = product.optString("expiration_date", "N/A");
             String imageUrl = product.optString("image_front_small_url", null);
 
-            boolean isInserted = databaseHelper.insertProduct(productName, expiryDate, imageUrl);
+            //boolean isInserted = databaseHelper.insertProduct(productName, expiryDate, imageUrl);
 
-            if (isInserted) {
+            /*if (isInserted) {
                 Toast.makeText(getApplicationContext(), "Product saved to database", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getApplicationContext(), "Failed to save product", Toast.LENGTH_SHORT).show();
             }
-
+*/
             // Display the extracted fields
             String displayText = //"Product: " + productName + "\n" +
                     "ProductName: " + productName + "\n" +
@@ -183,6 +237,30 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Error parsing JSON response", Toast.LENGTH_SHORT).show();
         }
     }
+    private void saveData(String productName, String quantity, String expiryDate) {
+        if (selectedImageBitmap == null) {
+            Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        databaseHelper = new DatabaseHelper(this);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        selectedImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+        boolean isInserted = databaseHelper.insertProduct(productName, expiryDate, byteArray, Integer.parseInt(quantity));
+
+        if (isInserted) {
+            Toast.makeText(this, "Data saved successfully", Toast.LENGTH_SHORT).show();
+            productNameEditText.setText("");
+            quantityEditText.setText("");
+            expiryDateEditText.setText("");
+            productImageView.setImageResource(android.R.color.transparent);
+        } else {
+            Toast.makeText(this, "Failed to save data", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 
     }
 

@@ -21,9 +21,9 @@
         app:titleTextColor="#FFFFFF" />
 
     <ImageView
-        android:id="@+id/productImageView"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:id="@+id/productImageView2"
+        android:layout_width="166dp"
+        android:layout_height="156dp"
         android:layout_below="@id/toolbar2"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="32dp"
@@ -33,7 +33,7 @@
         android:id="@+id/editTextProductName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/productImageView"
+        android:layout_below="@id/productImageView2"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
@@ -59,14 +59,29 @@
         android:layout_marginEnd="24dp"
         android:hint="Quantity" />
 
+    <ImageView
+        android:id="@+id/productImageView"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_below="@id/editTextQuantity"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/ic_launcher_placeholder_background"
+        android:scaleType="centerCrop"
+        android:clickable="true"
+        android:focusable="true"
+        android:contentDescription="Product Image" />
+
     <Button
         android:id="@+id/buttonSubmit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/editTextQuantity"
+        android:layout_below="@id/productImageView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="24dp"
         android:text="Submit" />
+
+
 
     <Button
         android:id="@+id/btn_scan"
