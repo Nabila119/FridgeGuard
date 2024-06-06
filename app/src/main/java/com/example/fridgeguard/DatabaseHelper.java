@@ -9,13 +9,15 @@ import android.util.Log;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "ProductDB";
-    private static final int DATABASE_VERSION = 2; // Update the version when you change the schema
-    private static final String TABLE_NAME = "Product";
+    private static final int DATABASE_VERSION = 4; // Update the version when you change the schema
+    private static final String TABLE_NAME = "Product_Table";
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_NAME = "name";
     private static final String COLUMN_EXPIRY_DATE = "expiryDate";
@@ -33,7 +35,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_NAME + " TEXT, " +
                 COLUMN_EXPIRY_DATE + " TEXT, " +
-                COLUMN_IMAGE_DATA + " TEXT, " +
+                COLUMN_IMAGE_DATA + " BLOB, " + // Ensure this column is BLOB
                 COLUMN_QUANTITY + " INTEGER DEFAULT 0, " +
                 COLUMN_REMAINING_DAYS + " INTEGER)"; // Add the new column for remaining days
         db.execSQL(createTable);
@@ -41,14 +43,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion < 2) {
-            // If upgrading from version 1 to version 2, add the new columns
-            db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + COLUMN_QUANTITY + " INTEGER DEFAULT 0");
-            db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + COLUMN_REMAINING_DAYS + " INTEGER");
+        if (oldVersion < 4) { // Change to the appropriate old version number
+            db.execSQL("DROP TABLE IF EXISTS OldProductTable"); // Optionally drop the old table
         }
+        onCreate(db);
     }
 
-    public boolean insertProduct(String name, String expiryDate, byte[] imageData, int quantity) {
+    public boolean insertProduct(Context context, String name, String expiryDate, byte[] imageData, int quantity) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COLUMN_NAME, name);
@@ -75,6 +76,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result != -1; // Return true if insertion is successful
     }
 
+    public List<Product> getAllProducts() {
+        List<Product> productList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                String name = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
+                int remainingDays = cursor.getInt(cursor.getColumnIndex(COLUMN_REMAINING_DAYS));
+                byte[] imageData = cursor.getBlob(cursor.getColumnIndex(COLUMN_IMAGE_DATA));
+
+                Product product = new Product(name, remainingDays, imageData);
+                productList.add(product);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return productList;
+    }
+
     // Method to calculate remaining days
     private int calculateRemainingDays(String expiryDate) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -92,10 +113,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return -1; // Return -1 if parsing fails
         }
     }
-    public Cursor getAllProducts() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT " + COLUMN_NAME + ", " + COLUMN_IMAGE_DATA + ", " + COLUMN_REMAINING_DAYS + " FROM " + TABLE_NAME;
-        return db.rawQuery(query, null);
-    }
-
 }
+

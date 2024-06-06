@@ -247,7 +247,8 @@ public class MainActivity extends AppCompatActivity {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         selectedImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] byteArray = stream.toByteArray();
-        boolean isInserted = databaseHelper.insertProduct(productName, expiryDate, byteArray, Integer.parseInt(quantity));
+        DatabaseHelper dbHelper = new DatabaseHelper(this);
+        boolean isInserted = databaseHelper.insertProduct(this,productName, expiryDate, byteArray, Integer.parseInt(quantity));
 
         if (isInserted) {
             Toast.makeText(this, "Data saved successfully", Toast.LENGTH_SHORT).show();
