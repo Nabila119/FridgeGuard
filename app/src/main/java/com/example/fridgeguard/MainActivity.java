@@ -2,10 +2,13 @@ package com.example.fridgeguard;
 
 import static android.content.ContentValues.TAG;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -29,6 +32,8 @@ import com.journeyapps.barcodescanner.ScanOptions;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Calendar;
+
 
 public class MainActivity extends AppCompatActivity {
     private RequestQueue mRequestQueue;
@@ -37,16 +42,52 @@ public class MainActivity extends AppCompatActivity {
     private String scannedBarcode;
     private DatabaseHelper databaseHelper; // Database helper instance
     Button btn_scan;
+    EditText productNameEditText, quantityEditText, expiryDateEditText;
+
+    Button submitButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+        productNameEditText = findViewById(R.id.editTextProductName);
+        quantityEditText = findViewById(R.id.editTextQuantity);
+        expiryDateEditText = findViewById(R.id.datePickerExpiryDate);
+        submitButton = findViewById(R.id.buttonSubmit);
+
+        expiryDateEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String productName = productNameEditText.getText().toString();
+                String quantity = quantityEditText.getText().toString();
+
+                Calendar calendar = Calendar.getInstance();
+                int year = calendar.get(Calendar.YEAR);
+                int month = calendar.get(Calendar.MONTH);
+                int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+
+                // Create and show DatePickerDialog
+                DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.this,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int selectedYear, int monthOfYear, int dayOfMonth) {
+                                // Process the selected date
+                                String selectedDate = dayOfMonth + "/" + (monthOfYear + 1) + "/" + selectedYear;
+                                expiryDateEditText.setText(selectedDate);
+                            }
+                        }, year, month, dayOfMonth);
+
+                datePickerDialog.show();
+            }
+        });
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
         btn_scan = findViewById(R.id.btn_scan);
         productImageView = findViewById(R.id.productImageView);
         databaseHelper = new DatabaseHelper(this);
@@ -142,47 +183,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Error parsing JSON response", Toast.LENGTH_SHORT).show();
         }
     }
-}
-/*
-    Button btn_scan;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
-        btn_scan = findViewById(R.id.btn_scan);
-        btn_scan.setOnClickListener(v ->
-        {
-            scanCode();
-        });
-    }
-    private void scanCode()
-    {
-        ScanOptions options = new ScanOptions();
-        options.setPrompt("Scan a barcode");
-        options.setBeepEnabled(true);
-        options.setOrientationLocked(true);
-        options.setCaptureActivity(com.example.fridgeguard.CaptureAct.class);
-        barcodeLauncher.launch(options);
 
     }
-    private final ActivityResultLauncher<ScanOptions> barcodeLauncher = registerForActivityResult(new ScanContract(),
-            result -> {
-                if(result.getContents() == null) {
-                    Toast.makeText(MainActivity.this, "Cancelled", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(MainActivity.this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
-                }
-            });
-    // Launch
-    public void onButtonClick(View view) {
-        barcodeLauncher.launch(new ScanOptions());
 
-    }
-*/
 

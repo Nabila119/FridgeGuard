@@ -1,60 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-    <!-- commenting to check volley
-        <Button
-            android:id="@+id/btn_scan"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="304dp"
-            android:text="Button"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.465"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-     -->
 
 
-    <RelativeLayout
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar2"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".MainActivity"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="-271dp">
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:textAlignment="center"
+        android:theme="?attr/actionBarTheme"
+        app:title="Add Item"
+        app:titleMargin="4dp"
+        app:titleTextColor="#FFFFFF" />
 
-        <Button
-            android:id="@+id/btn_scan"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="135dp"
-            android:layout_marginTop="192dp"
-            android:layout_marginEnd="143dp"
-            android:text="Scan Product"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.465"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <ImageView
+        android:id="@+id/productImageView"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_below="@id/toolbar2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp"
+        android:contentDescription="Product Image" />
 
-        <ImageView
-            android:id="@+id/productImageView"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_below="@id/btn_scan"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="103dp"
-            android:layout_marginTop="84dp"
-            android:layout_marginEnd="108dp"
-            android:contentDescription="Product Image" />
+    <EditText
+        android:id="@+id/editTextProductName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/productImageView"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:hint="Product Name" />
 
-    </RelativeLayout>
+    <EditText
+        android:id="@+id/datePickerExpiryDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextProductName"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:hint="Expiry Date"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <EditText
+        android:id="@+id/editTextQuantity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/datePickerExpiryDate"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:hint="Quantity" />
+
+    <Button
+        android:id="@+id/buttonSubmit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextQuantity"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:text="Submit" />
+
+    <Button
+        android:id="@+id/btn_scan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:text="Scan Product" />
+
+</RelativeLayout>
