@@ -54,8 +54,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
         public void bind(Product product) {
             productName.setText(product.getName());
-            productRemainingDays.setText(String.valueOf(product.getRemainingDays()));
-
+            // Format the remaining days text
+            String remainingDaysText = product.getRemainingDays() + " days";
+            productRemainingDays.setText(remainingDaysText);
             // Convert byte array to Bitmap and set to ImageView
             byte[] imageData = product.getImageData();
             Bitmap bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);

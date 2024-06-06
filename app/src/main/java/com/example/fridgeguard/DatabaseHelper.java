@@ -22,6 +22,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_NAME = "name";
     private static final String COLUMN_EXPIRY_DATE = "expiryDate";
     private static final String COLUMN_IMAGE_DATA = "imageUrl";
+    //private static final String COLUMN_IMAGE_URL = "imageUrl";
     private static final String COLUMN_QUANTITY = "quantity";
     private static final String COLUMN_REMAINING_DAYS = "remainingDays"; // New column name
 
@@ -76,6 +77,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result != -1; // Return true if insertion is successful
     }
 
+    public void deleteProduct(int productId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int result = db.delete(TABLE_NAME, COLUMN_ID + "=?", new String[]{String.valueOf(productId)});
+        if (result > 0) {
+            Log.d("DatabaseHelper", "Product deleted successfully with ID: " + productId);
+        } else {
+            Log.e("DatabaseHelper", "Failed to delete product with ID: " + productId);
+        }
+        db.close();
+    }
+
     public List<Product> getAllProducts() {
         List<Product> productList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -114,4 +126,4 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 }
-
+``

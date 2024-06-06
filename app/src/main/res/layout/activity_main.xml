@@ -66,11 +66,11 @@
         android:layout_below="@id/editTextQuantity"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
-        android:src="@drawable/ic_launcher_placeholder_background"
-        android:scaleType="centerCrop"
         android:clickable="true"
+        android:contentDescription="Product Image"
         android:focusable="true"
-        android:contentDescription="Product Image" />
+        android:scaleType="centerCrop"
+        android:src="@mipmap/ic_launcher" />
 
     <Button
         android:id="@+id/buttonSubmit"
