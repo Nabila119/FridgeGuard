@@ -40,23 +40,13 @@
         android:layout_marginEnd="24dp"
         android:hint="Expiry Date"/>
 
-    <EditText
-        android:id="@+id/editTextQuantity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/datePickerExpiryDate"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
-        android:hint="Quantity" />
-
     <ImageView
         android:id="@+id/productImageView"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_below="@id/editTextQuantity"
+        android:layout_below="@+id/datePickerExpiryDate"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="85dp"
         android:clickable="true"
         android:contentDescription="Product Image"
         android:focusable="true"
@@ -70,9 +60,9 @@
         android:layout_below="@id/productImageView"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="172dp"
-        android:layout_marginTop="28dp"
-        android:layout_marginEnd="146dp"
+        android:layout_marginStart="158dp"
+        android:layout_marginTop="82dp"
+        android:layout_marginEnd="160dp"
         android:text="Add" />
 
 

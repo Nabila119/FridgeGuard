@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,9 +17,11 @@ import java.util.List;
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
 
     private List<Product> productList;
+    private OnDeleteClickListener onDeleteClickListener;
 
-    public ProductAdapter(List<Product> productList) {
+    public ProductAdapter(List<Product> productList, OnDeleteClickListener onDeleteClickListener) {
         this.productList = productList;
+        this.onDeleteClickListener = onDeleteClickListener;
     }
 
     @NonNull
@@ -39,28 +42,48 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         return productList.size();
     }
 
-    static class ProductViewHolder extends RecyclerView.ViewHolder {
+    public void deleteItem(int position) {
+        Product product = productList.get(position);
+        productList.remove(position);
+        notifyItemRemoved(position);
+        onDeleteClickListener.onDeleteClick(product);
+    }
 
+    class ProductViewHolder extends RecyclerView.ViewHolder {
         private ImageView productImage;
         private TextView productName;
         private TextView productRemainingDays;
+        private Button deleteButton;
 
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
             productImage = itemView.findViewById(R.id.product_image);
             productName = itemView.findViewById(R.id.product_name);
             productRemainingDays = itemView.findViewById(R.id.product_remaining_days);
+            deleteButton = itemView.findViewById(R.id.delete_button);
+
+            deleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getBindingAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        deleteItem(position);
+                    }
+                }
+            });
         }
 
         public void bind(Product product) {
             productName.setText(product.getName());
-            // Format the remaining days text
             String remainingDaysText = product.getRemainingDays() + " days";
             productRemainingDays.setText(remainingDaysText);
-            // Convert byte array to Bitmap and set to ImageView
             byte[] imageData = product.getImageData();
             Bitmap bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
             productImage.setImageBitmap(bitmap);
         }
+    }
+
+    public interface OnDeleteClickListener {
+        void onDeleteClick(Product product);
     }
 }

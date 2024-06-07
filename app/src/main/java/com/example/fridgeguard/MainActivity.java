@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         productNameEditText = findViewById(R.id.editTextProductName);
-        quantityEditText = findViewById(R.id.editTextQuantity);
+        //quantityEditText = findViewById(R.id.editTextQuantity);
         expiryDateEditText = findViewById(R.id.datePickerExpiryDate);
         submitButton = findViewById(R.id.buttonSubmit);
         productImageView = findViewById(R.id.productImageView);
@@ -63,9 +63,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String productName = productNameEditText.getText().toString();
-                String quantity = quantityEditText.getText().toString();
+                //String quantity = quantityEditText.getText().toString();
                 String expiryDate = expiryDateEditText.getText().toString();
-                saveData(productName, quantity, expiryDate);
+                //saveData(productName, quantity, expiryDate);
+                saveData(productName, expiryDate);
             }
         });
 
@@ -98,7 +99,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void saveData(String productName, String quantity, String expiryDate) {
+    //private void saveData(String productName, String quantity, String expiryDate) {
+    private void saveData(String productName,  String expiryDate) {
         if (selectedImageBitmap == null) {
             Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show();
             return;
@@ -108,12 +110,13 @@ public class MainActivity extends AppCompatActivity {
         selectedImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] byteArray = stream.toByteArray();
 
-        boolean isInserted = databaseHelper.insertProduct(this, productName, expiryDate, byteArray, Integer.parseInt(quantity));
+        //boolean isInserted = databaseHelper.insertProduct(this, productName, expiryDate, byteArray, Integer.parseInt(quantity));
+        boolean isInserted = databaseHelper.insertProduct(this, productName, expiryDate, byteArray);
 
         if (isInserted) {
             Toast.makeText(this, "Data saved successfully", Toast.LENGTH_SHORT).show();
             productNameEditText.setText("");
-            quantityEditText.setText("");
+            //quantityEditText.setText("");
             expiryDateEditText.setText("");
             productImageView.setImageResource(android.R.color.transparent);
         } else {

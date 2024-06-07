@@ -51,13 +51,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean insertProduct(Context context, String name, String expiryDate, byte[] imageData, int quantity) {
+    //public boolean insertProduct(Context context, String name, String expiryDate, byte[] imageData, int quantity) {
+    public boolean insertProduct(Context context, String name, String expiryDate, byte[] imageData) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COLUMN_NAME, name);
         contentValues.put(COLUMN_EXPIRY_DATE, expiryDate);
         contentValues.put(COLUMN_IMAGE_DATA, imageData); // Adjusted to accept byte array
-        contentValues.put(COLUMN_QUANTITY, quantity);
+        //contentValues.put(COLUMN_QUANTITY, quantity);
 
 
         // Calculate remaining days and put it in contentValues
@@ -67,7 +68,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.d("DatabaseHelper", "Inserting Product: " +
                 "Name: " + name +
                 ", ExpiryDate: " + expiryDate +
-                ", Quantity: " + quantity +
+                //", Quantity: " + quantity +
                 ", RemainingDays: " + remainingDays);
 
         long result = db.insert(TABLE_NAME, null, contentValues);
@@ -97,11 +98,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
+                int id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID));  // Retrieve the id
                 String name = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
                 int remainingDays = cursor.getInt(cursor.getColumnIndex(COLUMN_REMAINING_DAYS));
                 byte[] imageData = cursor.getBlob(cursor.getColumnIndex(COLUMN_IMAGE_DATA));
 
-                Product product = new Product(name, remainingDays, imageData);
+                Product product = new Product(id, name, remainingDays, imageData);
                 productList.add(product);
             } while (cursor.moveToNext());
         }
