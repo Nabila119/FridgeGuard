@@ -37,6 +37,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_NAME + " TEXT, " +
                 COLUMN_EXPIRY_DATE + " TEXT, " +
                 COLUMN_IMAGE_DATA + " BLOB, " + // Ensure this column is BLOB
+                //COLUMN_IMAGE_URL + "TEXT" +
                 COLUMN_QUANTITY + " INTEGER DEFAULT 0, " +
                 COLUMN_REMAINING_DAYS + " INTEGER)"; // Add the new column for remaining days
         db.execSQL(createTable);
@@ -57,6 +58,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COLUMN_EXPIRY_DATE, expiryDate);
         contentValues.put(COLUMN_IMAGE_DATA, imageData); // Adjusted to accept byte array
         contentValues.put(COLUMN_QUANTITY, quantity);
+
 
         // Calculate remaining days and put it in contentValues
         int remainingDays = calculateRemainingDays(expiryDate);
@@ -126,4 +128,4 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 }
-``
+

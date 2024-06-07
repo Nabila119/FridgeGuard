@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
             String productName = product.optString("generic_name", "N/A");
             String expiryDate = product.optString("expiration_date", "N/A");
             String imageUrl = product.optString("image_front_small_url", null);
-
+            int quantity =10;
             //boolean isInserted = databaseHelper.insertProduct(productName, expiryDate, imageUrl);
 
             /*if (isInserted) {
@@ -217,6 +217,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Failed to save product", Toast.LENGTH_SHORT).show();
             }
 */
+
             // Display the extracted fields
             String displayText = //"Product: " + productName + "\n" +
                     "ProductName: " + productName + "\n" +
@@ -228,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
                 Glide.with(this)
                         .load(imageUrl)
                         .into(productImageView);
+                downloadAndSaveImage(productName, expiryDate, quantity, imageUrl);
             } else {
                 productImageView.setImageResource(R.drawable.ic_launcher_placeholder_background); // Placeholder image if URL is not available
             }
@@ -237,6 +239,24 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Error parsing JSON response", Toast.LENGTH_SHORT).show();
         }
     }
+    //convert the string image URL to blob and then calls the save in database method
+    private void downloadAndSaveImage(String productName, String expiryDate, int quantity, String imageUrl) {
+        ImageDownloader imageDownloader = new ImageDownloader();
+        imageDownloader.downloadImage(imageUrl, new ImageDownloader.ImageDownloadCallback() {
+            @Override
+            public void onImageDownloaded(byte[] imageData) {
+                saveDataWithImage(productName, quantity, expiryDate, imageData);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Toast.makeText(getApplicationContext(), "Error downloading image", Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Error downloading image: " + e.getMessage());
+            }
+        });
+    }
+
+    //to save data from the manual form
     private void saveData(String productName, String quantity, String expiryDate) {
         if (selectedImageBitmap == null) {
             Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show();
@@ -260,9 +280,17 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Failed to save data", Toast.LENGTH_SHORT).show();
         }
     }
+    // to save data for scanned product
+    private void saveDataWithImage(String productName, int quantity, String expiryDate, byte[] imageData) {
+        boolean isInserted = databaseHelper.insertProduct(this,productName, expiryDate, imageData, quantity);
 
-
-
+        if (isInserted) {
+            Toast.makeText(this, "Product saved to database", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Failed to save product", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
+
+}
