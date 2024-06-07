@@ -20,8 +20,8 @@ import java.io.ByteArrayOutputStream;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
-    private EditText productNameEditText, quantityEditText, expiryDateEditText;
-    private Button submitButton;
+    private EditText productNameEditText, expiryDateEditText;
+    private Button submitButton, button1Week, button2Weeks, button3Weeks;
     private ImageView productImageView;
     private Bitmap selectedImageBitmap;
     private DatabaseHelper databaseHelper;
@@ -45,10 +45,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         productNameEditText = findViewById(R.id.editTextProductName);
-        //quantityEditText = findViewById(R.id.editTextQuantity);
         expiryDateEditText = findViewById(R.id.datePickerExpiryDate);
         submitButton = findViewById(R.id.buttonSubmit);
         productImageView = findViewById(R.id.productImageView);
+        button1Week = findViewById(R.id.button1Week);
+        button2Weeks = findViewById(R.id.button2Weeks);
+        button3Weeks = findViewById(R.id.button3Weeks);
 
         databaseHelper = new DatabaseHelper(this);
 
@@ -59,13 +61,32 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        button1Week.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setExpiryDate(7);
+            }
+        });
+
+        button2Weeks.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setExpiryDate(14);
+            }
+        });
+
+        button3Weeks.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setExpiryDate(21);
+            }
+        });
+
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String productName = productNameEditText.getText().toString();
-                //String quantity = quantityEditText.getText().toString();
                 String expiryDate = expiryDateEditText.getText().toString();
-                //saveData(productName, quantity, expiryDate);
                 saveData(productName, expiryDate);
             }
         });
@@ -99,8 +120,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //private void saveData(String productName, String quantity, String expiryDate) {
-    private void saveData(String productName,  String expiryDate) {
+    private void setExpiryDate(int daysToAdd) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, daysToAdd);
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1; // Months are 0-based in Calendar
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        String selectedDate = dayOfMonth + "/" + month + "/" + year;
+        expiryDateEditText.setText(selectedDate);
+    }
+
+    private void saveData(String productName, String expiryDate) {
         if (selectedImageBitmap == null) {
             Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show();
             return;
@@ -110,18 +140,15 @@ public class MainActivity extends AppCompatActivity {
         selectedImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] byteArray = stream.toByteArray();
 
-        //boolean isInserted = databaseHelper.insertProduct(this, productName, expiryDate, byteArray, Integer.parseInt(quantity));
         boolean isInserted = databaseHelper.insertProduct(this, productName, expiryDate, byteArray);
 
         if (isInserted) {
             Toast.makeText(this, "Data saved successfully", Toast.LENGTH_SHORT).show();
             productNameEditText.setText("");
-            //quantityEditText.setText("");
             expiryDateEditText.setText("");
             productImageView.setImageResource(android.R.color.transparent);
         } else {
             Toast.makeText(this, "Failed to save data", Toast.LENGTH_SHORT).show();
-        }
-    }
-}
 
+        }
+    }}

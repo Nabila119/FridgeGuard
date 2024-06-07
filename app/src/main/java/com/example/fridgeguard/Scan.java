@@ -38,6 +38,9 @@ public class Scan extends AppCompatActivity {
     private TextView productNameTextView;
     private EditText expiryDateEditText;
     private Button submitButton;
+    private Button button1Week;
+    private Button button2Weeks;
+    private Button button3Weeks;
     private String scannedBarcode;
     private DatabaseHelper databaseHelper;
     private String productName;
@@ -62,6 +65,9 @@ public class Scan extends AppCompatActivity {
         productNameTextView = findViewById(R.id.textViewProductName);
         expiryDateEditText = findViewById(R.id.editTextExpiryDate);
         submitButton = findViewById(R.id.buttonSubmit);
+        button1Week = findViewById(R.id.button1Week);
+        button2Weeks = findViewById(R.id.button2Weeks);
+        button3Weeks = findViewById(R.id.button3Weeks);
         databaseHelper = new DatabaseHelper(this);
 
         submitButton.setOnClickListener(new View.OnClickListener() {
@@ -71,24 +77,32 @@ public class Scan extends AppCompatActivity {
                 saveDataWithImage(productName, expiryDate, imageData);
             }
         });
+
         expiryDateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Calendar calendar = Calendar.getInstance();
-                int year = calendar.get(Calendar.YEAR);
-                int month = calendar.get(Calendar.MONTH);
-                int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+                showDatePicker();
+            }
+        });
 
-                DatePickerDialog datePickerDialog = new DatePickerDialog(Scan.this,
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int selectedYear, int monthOfYear, int dayOfMonth) {
-                                String selectedDate = dayOfMonth + "/" + (monthOfYear + 1) + "/" + selectedYear;
-                                expiryDateEditText.setText(selectedDate);
-                            }
-                        }, year, month, dayOfMonth);
+        button1Week.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setExpiryDate(7);
+            }
+        });
 
-                datePickerDialog.show();
+        button2Weeks.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setExpiryDate(14);
+            }
+        });
+
+        button3Weeks.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setExpiryDate(21);
             }
         });
 
@@ -173,5 +187,33 @@ public class Scan extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Failed to save product", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void showDatePicker() {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(Scan.this,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int selectedYear, int monthOfYear, int dayOfMonth) {
+                        String selectedDate = dayOfMonth + "/" + (monthOfYear + 1) + "/" + selectedYear;
+                        expiryDateEditText.setText(selectedDate);
+                    }
+                }, year, month, dayOfMonth);
+
+        datePickerDialog.show();
+    }
+
+    private void setExpiryDate(int daysFromNow) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, daysFromNow);
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        String selectedDate = dayOfMonth + "/" + (month + 1) + "/" + year;
+        expiryDateEditText.setText(selectedDate);
     }
 }
