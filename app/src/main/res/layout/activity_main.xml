@@ -20,22 +20,13 @@
         app:titleMargin="4dp"
         app:titleTextColor="#FFFFFF" />
 
-    <ImageView
-        android:id="@+id/productImageView2"
-        android:layout_width="166dp"
-        android:layout_height="156dp"
-        android:layout_below="@id/toolbar2"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="32dp"
-        android:contentDescription="Product Image" />
-
     <EditText
         android:id="@+id/editTextProductName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/productImageView2"
+        android:layout_below="@+id/toolbar2"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="42dp"
         android:layout_marginEnd="24dp"
         android:hint="Product Name" />
 
@@ -77,19 +68,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/productImageView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="24dp"
-        android:text="Submit" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="172dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="146dp"
+        android:text="Add" />
 
-
-
-    <Button
-        android:id="@+id/btn_scan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/toolbar2"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="24dp"
-        android:text="Scan Product" />
 
 </RelativeLayout>

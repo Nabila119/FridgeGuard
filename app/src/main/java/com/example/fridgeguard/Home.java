@@ -55,4 +55,8 @@
         Intent i = new Intent(this, MainActivity.class);
         startActivity(i);
     }
+    public void launchScanItem(View v){
+         Intent i = new Intent(this, Scan.class);
+         startActivity(i);
+     }
 }
