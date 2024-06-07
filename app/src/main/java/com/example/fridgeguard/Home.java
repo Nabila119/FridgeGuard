@@ -11,9 +11,13 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class Home extends AppCompatActivity implements ProductAdapter.OnDeleteClickListener {
     private RecyclerView recyclerView;
@@ -42,6 +46,10 @@ public class Home extends AppCompatActivity implements ProductAdapter.OnDeleteCl
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        scheduleProductCheck();
+
+        // Execute the check immediately when the app is launched
+        checkProductsImmediately();
     }
 
     private void loadProducts() {
@@ -65,5 +73,16 @@ public class Home extends AppCompatActivity implements ProductAdapter.OnDeleteCl
         int productId = product.getId();
         databaseHelper.deleteProduct(productId);
         loadProducts(); // Refresh the product list
+    }
+    private void scheduleProductCheck() {
+        PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(CheckProductsWorker.class, 1, TimeUnit.MINUTES)
+                .build();
+        WorkManager.getInstance(this).enqueue(workRequest);
+    }
+
+    private void checkProductsImmediately() {
+        OneTimeWorkRequest immediateWorkRequest = new OneTimeWorkRequest.Builder(CheckProductsWorker.class)
+                .build();
+        WorkManager.getInstance(this).enqueue(immediateWorkRequest);
     }
 }

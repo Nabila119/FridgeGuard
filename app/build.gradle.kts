@@ -55,5 +55,7 @@ dependencies {
     implementation ("com.github.bumptech.glide:glide:4.12.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
     implementation ("androidx.cardview:cardview:1.0.0")
+    implementation ("androidx.work:work-runtime:2.7.1") // Check for the latest version
     //implementation ("com.intellij:annotations:+@jar")
+
 }
